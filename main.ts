@@ -90,7 +90,7 @@ export default class ExpandOut extends Plugin {
   }
 
 	onunload() {
-
+    this.saveSettings();
 	}
 
 	async loadSettings() {
