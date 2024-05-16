@@ -1,8 +1,4 @@
-import { DEFAULT_SETTINGS, ExpandOutSettings } from './settings';
-
-import { Plugin } from 'obsidian';
-
-// Remember to rename these classes and interfaces!
+import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 declare module 'obsidian' {
   interface Workspace {
@@ -25,11 +21,16 @@ declare module 'obsidian' {
   }
 }
 
+interface ExpandOutSettings {
+  movespeed: number;
+}
+
 export default class ExpandOut extends Plugin {
 	settings: ExpandOutSettings;
 
 	async onload() {
     await this.loadSettings();
+    this.addSettingTab(new ExpandOutSettingTab(this.app, this));
     const leftButton = this.app.workspace.leftSidebarToggleButtonEl;
     const rightButton = this.app.workspace.rightSidebarToggleButtonEl;
     
@@ -42,7 +43,7 @@ export default class ExpandOut extends Plugin {
       
       const start = window.innerWidth;
       const end = pageWidth - (leftSplit.collapsed ? leftSplitWidth : -leftSplitWidth);
-      const step = (end - start) / 10;
+      const step = (end - start) * this.settings.movespeed / 100;
       const animate = () => {
         if (Math.abs(window.innerWidth - end) < Math.abs(step)) {
           window.resizeTo(end, pageHeight);
@@ -55,7 +56,7 @@ export default class ExpandOut extends Plugin {
       
       const startLeft = window.screenLeft;
       const endLeft = window.screenLeft + (leftSplit.collapsed ? leftSplitWidth : -leftSplitWidth);
-      const stepLeft = (endLeft - startLeft) / 10;
+      const stepLeft = (endLeft - startLeft) * this.settings.movespeed / 100;
       const animateLeft = () => {
         if (Math.abs(window.screenLeft - endLeft) < Math.abs(stepLeft)) {
           window.moveTo(endLeft, window.screenTop);
@@ -75,7 +76,7 @@ export default class ExpandOut extends Plugin {
       const pageHeight = workspace.containerEl.clientHeight;
       const start = window.innerWidth;
       const end = pageWidth + (rightSplit.collapsed ? -rightSplitWidth : rightSplitWidth);
-      const step = (end - start) / 10;
+      const step = (end - start) * this.settings.movespeed / 100;
       const animate = () => {
         if (Math.abs(window.innerWidth - end) < Math.abs(step)) {
           window.resizeTo(end, pageHeight);
@@ -99,4 +100,39 @@ export default class ExpandOut extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+}
+
+// settings
+
+const DEFAULT_SETTINGS: ExpandOutSettings = {
+  movespeed: 7,
+}
+
+class ExpandOutSettingTab extends PluginSettingTab {
+  plugin: ExpandOut;
+  
+  constructor(app: App, plugin: ExpandOut) {
+    super(app, plugin);
+    this.plugin = plugin;
+  }
+
+  display() {
+    const { containerEl } = this
+    containerEl.empty()
+
+    new Setting(containerEl)
+      .setName('Expand Speed')
+      .setDesc('The speed of expanding the split panel. Default is 10. Set to 0 to disable animation.(Not recommended)')
+      .addSlider(slider => {
+        slider
+          .setLimits(0, 20, 1)
+          .setValue(this.plugin.settings.movespeed)
+          .setDynamicTooltip()
+          .onChange(async value => {
+            this.plugin.settings.movespeed = value
+            await this.plugin.saveSettings()
+          })
+      })
+      
+  }
 }
