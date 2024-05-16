@@ -1,6 +1,6 @@
+import builtins from "builtin-modules";
 import esbuild from "esbuild";
 import process from "process";
-import builtins from "builtin-modules";
 
 const banner =
 `/*
@@ -15,7 +15,7 @@ const context = await esbuild.context({
 	banner: {
 		js: banner,
 	},
-	entryPoints: ["main.ts"],
+	entryPoints: ["src/main.ts"],
 	bundle: true,
 	external: [
 		"obsidian",
@@ -37,7 +37,7 @@ const context = await esbuild.context({
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
-	outfile: "main.js",
+	outdir: "../ExpandOutTestVault/.obsidian/plugins/expand-out",
 });
 
 if (prod) {

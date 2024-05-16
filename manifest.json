@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "expand-out",
+	"name": "Expand Out",
 	"version": "1.0.0",
-	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
-	"isDesktopOnly": false
+	"minAppVersion": "1.0.0",
+	"description": "An Obsidian plugin that alters the default split view collapse/expand behavior, allowing the split views to expand outward when the button is clicked, offering more flexible layout control and an enhanced user experience.",
+	"author": "Huajin",
+	"authorUrl": "https://github.com/xhuajin",
+	"isDesktopOnly": true
 }
